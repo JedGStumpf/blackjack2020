@@ -1,2 +1,2 @@
-# blackjak2020
+# blackjack2020
 Application written in Python and Kivy
