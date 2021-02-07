@@ -1,7 +1,8 @@
 """
-This is the file for the black_jack_app
-
+The code written below and in the corresponding kv file represents my first app.  It was a tremendous learning experience.
+I have since packaged this app with Pyinstaller for Windows and Buildozer for Android.
 """
+
 import kivy
 kivy.require('1.11.1')  # Replace with version of Kivy
 import webbrowser as webbrowser
@@ -9,9 +10,11 @@ from random import random as random
 from random import shuffle as shuffle
 from math import ceil as ceil
 
-# The next 2 lines for Config is used ony for mouse touch instances.  For touchscreens delete or comment out.
+# The next 2 lines for Config is used ony for mouse touch instances, uncomment them for that purpose.  For touchscreens delete or leave them commented out.
 # from kivy.config import Config
 # Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+
+# The Below line is used when packaging for Windows, uncomment if that is your use case.
 # from kivy.resources import resource_add_path, resource_find
 from kivy.app import App
 from kivy.lang import Builder
@@ -81,10 +84,6 @@ class DeckOfCards:
         self.card = card
 
         self.value = value
-
-    def __str__(self):
-        return f'{self.card}, {self.value}'
-
 
 
 #Deck of Cardsd objects, each object is an image of a card and the corrisponding value    
@@ -216,15 +215,13 @@ class GameScreen(Screen):
     split_deal = 0
     who_deal = 0
     add_split_box_ind = 0
-
+    
+    # String to display messages
     banner = ''
 
     
     def __init__(self, *args, **kwargs):
         super(GameScreen, self).__init__(*args, **kwargs)
-
-        # self.bet_drop = BetDropDown()
-        # self.bet_vals = bet_vals
 
     def max_bet(self, value):
         new_chip_count = value
@@ -234,6 +231,7 @@ class GameScreen(Screen):
         new_chip_count = ceil(int(value)/2)
         return f'Bet\n${str(new_chip_count)}'
     
+    # Creates Buttons for Bet Options.  Called on when Player is changing their bet amount or making first bet.
     def add_bet_options(self):
         self.ids.new_deal.disabled = True
         if len(self.ids.All_Boxes.children) > 8:
@@ -295,6 +293,7 @@ class GameScreen(Screen):
         bet_all.bind(on_release = all_update)
         var_options.add_widget(bet_all)
 
+        #checks to see if the bet boxes already exist before adding.
         if len(self.ids.All_Boxes.children) == 8:
             
             self.ids.All_Boxes.add_widget(self.all_bets)
@@ -387,13 +386,10 @@ class GameScreen(Screen):
             self.wait_to_deal(self.deal_cpu_3)
     
     def hit_command(self):
-        # print(f'\nHtCmd:  {self.player_hands}\n')
         if self.banner == 'Your Turn':
             Clock.schedule_once(self.rem_display)
 
-        # if self.hit_again == True and self.dealt_table == True:
         self.deal_player(self.player_hands[self.who_deal])
-        # print(f'play_hand_whoDeal: {self.player_hands[self.who_deal]}')
         self.ids.double_down.disabled = True
         self.enable_special()      
 
@@ -403,7 +399,6 @@ class GameScreen(Screen):
     # Popup if bet amount is more than chip count
     def bet_over_chips(self):
         too_much = BetTooHigh_Pop(title = 'Bet Is Too High', size_hint = (0.66, 0.66), title_align = 'center', auto_dismiss = False)  
-        # if BlackJack2020.allow_bet == True:
         too_much.open()
 
     
@@ -435,11 +430,9 @@ class GameScreen(Screen):
         
         return shuffle(self.deck)
 
+        # Leaving this comented out testing deck.  Put any cards in the test deck necessary to test what happens.  This is very useful for splits.
         # self.test_deck = [eight_diamond, eight_heart, eight_club, eight_spade, king_club, king_spade, ace_diamond, ace_heart]*100
-
         # return shuffle(self.test_deck)
-
-
 
 
     # Function to uppdate chip count after bet placement
@@ -462,7 +455,7 @@ class GameScreen(Screen):
 
     # Pulls card from Deck or subs blank card for dealer 1st card
     def pull_card(self):
-        # self.card = self.test_deck.pop()
+        # self.card = self.test_deck.pop()  #Again leaving in the commented out code for the test deck.
         self.card = self.deck.pop()
         self.dealt_card = self.card.card
         self.dealt_image = Image(source = self.card.card)
@@ -478,15 +471,9 @@ class GameScreen(Screen):
 
     # Updates Each Hand Values
     def update_value(self, hand):
-        # print(f'Update: {hand}')
-       
         updtd_dlr_val = 0
 
         for i, val in enumerate(self.hand_values):
-        # for i in self.hand_values:
-            
-
-
             if i == hand:
                 if self.hand_values[i].text[-1] == 'd':
                     self.hand_values[i].text = '0'
@@ -549,8 +536,7 @@ class GameScreen(Screen):
                 self.ids.double_down.disabled = False
             else:
                 self.ids.double_down.disabled = True
-        # else:
-        #     self.ids.double_down.disabled = True
+
             if self.allow_split(self.who_deal) == True and self.split_count > -1:
                 self.ids.split.disabled = False
             else:
@@ -563,7 +549,6 @@ class GameScreen(Screen):
             return
         if len(self.deck) < 104:
             self.shuffle_deck()
-        # self.keep_count_record = int(self.ids.bet.text[5::])
 
         self.player_hands = [self.ids.cp1_cards, self.ids.cp2_cards, self.ids.player_cards, self.ids.cp3_cards, self.ids.cp4_cards, self.ids.dealer_cards]
 
@@ -577,8 +562,6 @@ class GameScreen(Screen):
                 count-=6
             self.deal_card(player)
             self.stop_anim()
-            # if count > 5:
-            #     count-=6
             self.update_value(count)
 
             if count == 2 and self.hand_values[count].text == '21':
@@ -589,7 +572,6 @@ class GameScreen(Screen):
                 self.hit_again = False
             self.who_deal += 1
         self.who_deal = 0
-        # self.wait_to_deal(self.deal_cpu_1)  #Delete Me
 
         if self.hld_dlr_val + int(self.ids.dealer_value.text) == 21:
             self.flip_dlr_crd()
@@ -643,16 +625,9 @@ class GameScreen(Screen):
 
 
     def deal_player(self, hand):
-        # print(f'\nDl Plr:  {hand}\n')
-        # if self.blck_jck == True:
-        #     self.stay()
-        #     return
-        # print(f'cards: {self.ids.player_cards.children}')
 
         self.play_turn = True
-        # self.hit()
         self.ids.hit.disabled = True
-
         self.blackjack(hand)
         self.blck_jck = False
         
@@ -943,21 +918,15 @@ class GameScreen(Screen):
             self.split_value.text = str(self.move_value)
 
             if self.splitting_aces == True and self.add_split_box_ind == self.hand_boxes.index(self.ids.player_hand_box):
-                
-                # self.deal_player(self.player_hands[self.who_deal])
                 self.hit()
-                # if hold_who_deal == self.who_deal:
                 self.blackjack(self.player_hands[self.who_deal])
                 self.blck_jck = False
                 self.stay()
-                # else:
-                #     self.blck_jck = False
-                # self.deal_player(self.player_hands[self.who_deal])
+
                 self.hit()
                 self.blackjack(self.player_hands[self.who_deal])
-                # if hold_who_deal == self.who_deal:
-                # if self.bust == False and self.blck_jck == False:
                 self.stay()
+
                 self.enable_special()
                 self.ids.stay.disabled = True
                 self.ids.hit.disabled = True
@@ -970,33 +939,23 @@ class GameScreen(Screen):
                 self.hit()
                 self.blackjack(self.player_hands[self.who_deal])
                 if self.blck_jck == True:
-                    # Clock.schedule_once(self.add_display, 0.2)
-                    # Clock.schedule_once(self.rem_display, 1.7)
                     self.blck_jck = False
                     self.bl_split = True
                     
 
                 self.who_deal += 1
-
                 self.hit()
-
                 self.blackjack(self.player_hands[self.who_deal])
 
                 if self.blck_jck == True:
-                    # Clock.schedule_once(self.add_display, 0.2)
-                    # Clock.schedule_once(self.rem_display, 1.7)
                     self.blck_jck = False
                     self.bl_split2 = True
                 self.who_deal -= 1
                 self.split_jacks()
                 if self.bl_split == False and self.bl_split2 == True:
                     self.bl_split_last = True
-
                 self.enable_special()      
 
-
-
-                # self.deal_player(self.player_hands[self.who_deal])
             else:
                 self.hit()
                 self.who_deal += 1
@@ -1006,10 +965,7 @@ class GameScreen(Screen):
             if self.who_deal == self.player_hands.index(self.ids.player_cards):   
                 self.enable_special()
         Clock.schedule_once(self.rem_display)
-        # else:
-        #     pass
 
-        
 
 #####     End of Round Functionality     #####
 
@@ -1046,8 +1002,6 @@ class GameScreen(Screen):
             dealer_21 = True
 
         double = self.hold_bet
-            
-        # before = self.hand_winnings + float(self.ids.bet.text[5:]) + double
 
         for i, val in enumerate(self.hand_values[start:stop]):
             bet_amt = float(self.ids.bet.text[5::])
@@ -1104,15 +1058,12 @@ class GameScreen(Screen):
         
         while len(self.ids.chip_count.children) > 0:
             self.ids.chip_count.remove_widget(self.ids.chip_count.children[-1])
-        
-    
 
 
     # Resets the table except for chip count if another bet is placed
     def play_again(self, dt):
         count = len(self.player_hands)
         position = 0
-       
 
         while count > 0:
             for item in self.player_hands[position].children[::]:
@@ -1198,10 +1149,7 @@ class EndScreen(Screen):
         last_exit.open()
 
 
-
 #Main Catalog Class of the Game.  Instances of each necessary class are kept here for reference in the kivy file
-
-
 class BlackJack2020(App):
     blackjack = ObjectProperty(None)
     homescreen = HomeScreen()
