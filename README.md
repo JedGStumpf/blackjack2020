@@ -7,3 +7,8 @@ This was not done with a tutorial, just the desire to learn and create.
 Many Many hours of trial/error and google/Githum/Stack Overflow searches got me to this finished product.
 
 I have since packaged this app succesfully for both Windows and Android.
+
+If you are interested here is the link to the playstore listing:
+    https://play.google.com/store/apps/details?id=jed.stumpf.blackjack2020
+    
+    
